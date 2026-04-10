@@ -99,6 +99,10 @@
     function handleDownload() {
       const btn = document.querySelector('.button');
       btn.innerHTML = "⏳ Baixando...";
+
+      setTimeout(() => {
+        btn.innerHTML = "⬇️ Download";
+      }, 3000);
     }
   </script>
 </body>
