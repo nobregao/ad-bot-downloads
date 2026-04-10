@@ -6,130 +6,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releases Ad-Bot</title>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
       background: #f5f7fa;
-      margin: 0;
-      padding: 0;
     }
 
-    .container {
-      max-width: 720px;
-      margin: 80px auto;
-      padding: 40px 20px;
-      text-align: center;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #e6f4ea;
-      color: #137333;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    p {
-      color: #555;
-      margin-bottom: 30px;
-    }
-
-    .button {
-      display: inline-flex;
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 16px 28px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 16px;
-      background: #2563eb;
-      color: white;
-      transition: all 0.2s ease;
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+      justify-content: center;
+      padding: 24px;
     }
 
-    .button:hover {
-      background: #1e4ed8;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+    .download-card {
+      border-radius: 18px !important;
     }
 
-    .button:active {
-      transform: scale(0.98);
+    .hero-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
     }
 
-    .footer {
-      margin-top: 30px;
-      font-size: 13px;
-      color: #888;
+    .version-wrapper {
+      margin: 20px 0 28px;
+    }
+
+    .download-button {
+      min-width: 220px;
+    }
+
+    .support-text {
+      margin-top: 28px;
+      color: rgba(0, 0, 0, 0.55);
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>🤖 Ad-Bot 🤖</h1>
+  <main class="page-wrapper">
+    <section class="ui raised padded text container segment download-card">
+      <div class="ui center aligned basic segment">
+        <div class="hero-icon">🤖</div>
 
-    <div class="badge">
-      Última versão
-      <label id="version">...</label>
-    </div>
+        <h1 class="ui header">
+          Ad-Bot
+          <div class="sub header">
+            Faça download da automação inteligente de anúncios online.
+          </div>
+        </h1>
 
-    <p>
-      Faça download da automação inteligente de anúncios online.
-    </p>
+        <div class="version-wrapper">
+          <div>
+            Última versão:
+            <span id="version" class="ui green label">Carregando...</span>
+          </div>
+        </div>
 
-    <a class="button" href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/bot.zip"
-      onclick="handleDownload()">
-      ⬇️ Download
-    </a>
+        <a id="downloadBtn" class="ui large blue labeled icon button download-button"
+          href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/bot.zip"
+          onclick="handleDownload()">
+          <i class="download icon"></i>
+          Download
+        </a>
 
-    <div class="footer">
-      Em caso de dúvidas, entre em contato com o suporte.
-    </div>
-  </div>
+        <!-- <div style="margin-top: 14px;">
+          <a class="ui basic button" href="https://github.com/nobregao/ad-bot-downloads/releases/latest" target="_blank"
+            rel="noopener noreferrer">
+            Ver detalhes da release
+          </a>
+        </div> -->
+
+        <p class="support-text">
+          Em caso de dúvidas, entre em contato com o suporte.
+        </p>
+      </div>
+    </section>
+  </main>
 
   <script>
     function handleDownload() {
-      const btn = document.querySelector('.button');
-      btn.innerHTML = "⏳ Baixando...";
+      const btn = document.getElementById('downloadBtn');
+
+      btn.classList.add('loading');
+      btn.classList.add('disabled');
+      btn.innerHTML = '<i class="download icon"></i>Baixando...';
 
       setTimeout(() => {
-        btn.innerHTML = "⬇️ Download";
+        btn.classList.remove('loading');
+        btn.classList.remove('disabled');
+        btn.innerHTML = '<i class="download icon"></i>Download';
       }, 3000);
     }
 
     async function loadLatestVersion() {
+      const versionElement = document.getElementById("version");
+
       try {
         const res = await fetch(
           "https://api.github.com/repos/nobregao/ad-bot-downloads/releases/latest"
         );
 
+        if (!res.ok) {
+          throw new Error("Falha ao buscar release");
+        }
+
         const data = await res.json();
-
-        const version = data.tag_name;
-
-        document.getElementById("version").innerHTML = version;
-
+        versionElement.textContent = data.tag_name || "Indisponível";
       } catch (error) {
-        document.getElementById("version").innerHTML =
-          "Não foi possível carregar a versão";
+        versionElement.textContent = "Não disponível";
       }
     }
 
     loadLatestVersion();
-  </script>
   </script>
 </body>
 
