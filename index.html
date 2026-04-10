@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Download do Ad-Bot</title>
+  <title>Releases Ad-Bot</title>
 
   <style>
     body {
@@ -79,11 +79,16 @@
 
 <body>
   <div class="container">
-    <h1>🤖 Ad-Bot</h1>
+    <h1>🤖 Ad-Bot 🤖</h1>
 
-    <div class="badge">Versão mais recente</div>
+    <div class="badge">
+      Última versão
+      <label id="version">...</label>
+    </div>
 
-    <p>Baixe a última versão do robô de anúncios.</p>
+    <p>
+      Faça download da automação inteligente de anúncios online.
+    </p>
 
     <a class="button" href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/bot.zip"
       onclick="handleDownload()">
@@ -104,6 +109,27 @@
         btn.innerHTML = "⬇️ Download";
       }, 3000);
     }
+
+    async function loadLatestVersion() {
+      try {
+        const res = await fetch(
+          "https://api.github.com/repos/nobregao/ad-bot-downloads/releases/latest"
+        );
+
+        const data = await res.json();
+
+        const version = data.tag_name;
+
+        document.getElementById("version").innerHTML = version;
+
+      } catch (error) {
+        document.getElementById("version").innerHTML =
+          "Não foi possível carregar a versão";
+      }
+    }
+
+    loadLatestVersion();
+  </script>
   </script>
 </body>
 
