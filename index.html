@@ -23,6 +23,8 @@
 
     .download-card {
       border-radius: 18px !important;
+      max-width: 760px;
+      width: 100%;
     }
 
     .hero-icon {
@@ -31,30 +33,54 @@
     }
 
     .version-wrapper {
-      margin: 20px 0 28px;
+      margin: 20px 0 16px;
     }
 
     .download-group {
       display: flex;
-      gap: 16px;
+      gap: 24px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .download-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .download-button {
       min-width: 220px;
     }
 
+    .download-item .ui.label {
+      margin-top: 8px;
+    }
+
     .support-text {
-      margin-top: 28px;
+      margin-top: 20px;
       color: rgba(0, 0, 0, 0.55);
+    }
+
+    .instructions-wrapper {
+      margin-top: 28px;
+      text-align: left;
+    }
+
+    .instructions-wrapper code {
+      display: block;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f8f8f8;
+      word-break: break-all;
     }
   </style>
 </head>
 
 <body>
   <main class="page-wrapper">
-    <section class="ui raised padded text container segment download-card">
+    <section class="ui raised padded segment download-card">
       <div class="ui center aligned basic segment">
         <div class="hero-icon">🤖</div>
 
@@ -78,21 +104,53 @@
 
         <div class="download-group">
 
-          <a id="downloadWin" class="ui large blue labeled icon button download-button"
-            href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-windows.zip"
-            onclick="handleDownload(this)">
-            <i class="windows icon"></i>
-            Windows
-          </a>
+          <!-- WINDOWS -->
+          <div class="download-item">
+            <a id="downloadWin" class="ui large blue labeled icon button download-button"
+              href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-windows.zip"
+              onclick="handleDownload(this)">
+              <i class="windows icon"></i>
+              <span>Windows</span>
+            </a>
+            <div id="winRecommended"></div>
+          </div>
 
-          <a id="downloadMac" class="ui large black labeled icon button download-button"
-            href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-macos.zip"
-            onclick="handleDownload(this)">
-            <i class="apple icon"></i>
-            Mac
-          </a>
+          <!-- MAC -->
+          <div class="download-item">
+            <a id="downloadMac" class="ui large black labeled icon button download-button"
+              href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-macos.zip"
+              onclick="handleDownload(this)">
+              <i class="apple icon"></i>
+              <span>Mac</span>
+            </a>
+            <div id="macRecommended"></div>
+          </div>
 
         </div>
+      </div>
+
+      <div class="instructions-wrapper">
+
+        <!-- WINDOWS -->
+        <div id="windowsInstructions" class="ui warning message" style="display: none;">
+          <div class="header">Primeiro uso no Windows</div>
+          <p>Se aparecer a mensagem <strong>“O Windows protegeu seu PC”</strong>:</p>
+          <ol class="ui list">
+            <li>Clique em <strong>Mais informações</strong></li>
+            <li>Depois clique em <strong>Executar assim mesmo</strong></li>
+          </ol>
+        </div>
+
+        <!-- MAC -->
+        <div id="macInstructions" class="ui warning message" style="display: none;">
+          <div class="header">Primeiro uso no Mac</div>
+          <p>Se o aplicativo não abrir normalmente, execute este comando no Terminal:</p>
+          <code>xattr -dr com.apple.quarantine *.app</code>
+          <p style="margin-top: 10px;">
+            Depois, tente abrir o aplicativo novamente.
+          </p>
+        </div>
+
       </div>
     </section>
   </main>
@@ -102,7 +160,7 @@
       button.classList.add('loading', 'disabled');
       const originalText = button.innerHTML;
 
-      button.innerHTML = '<i class="download icon"></i>Baixando...';
+      button.innerHTML = '<i class="download icon"></i><span>Baixando...</span>';
 
       setTimeout(() => {
         button.classList.remove('loading', 'disabled');
@@ -118,18 +176,50 @@
           "https://api.github.com/repos/nobregao/ad-bot-downloads/releases/latest"
         );
 
-        if (!res.ok) {
-          throw new Error("Falha ao buscar release");
-        }
+        if (!res.ok) throw new Error();
 
         const data = await res.json();
         versionElement.textContent = data.tag_name || "Indisponível";
-      } catch (error) {
+      } catch {
         versionElement.textContent = "Não disponível";
       }
     }
 
+    function detectSystem() {
+      const platform = navigator.platform.toLowerCase();
+      const userAgent = navigator.userAgent.toLowerCase();
+
+      const isMac = platform.includes("mac") || userAgent.includes("mac");
+      const isWindows = platform.includes("win") || userAgent.includes("windows");
+
+      const winBtn = document.getElementById("downloadWin");
+      const macBtn = document.getElementById("downloadMac");
+
+      const winRecommended = document.getElementById("winRecommended");
+      const macRecommended = document.getElementById("macRecommended");
+
+      const macInstructions = document.getElementById("macInstructions");
+      const windowsInstructions = document.getElementById("windowsInstructions");
+
+      if (isWindows) {
+        winRecommended.innerHTML =
+          '<span class="ui gray pointing label">Recomendado</span>';
+
+        windowsInstructions.style.display = "block";
+        return;
+      }
+
+      if (isMac) {
+        macRecommended.innerHTML =
+          '<span class="ui gray pointing label">Recomendado</span>';
+
+        macInstructions.style.display = "block";
+        return;
+      }
+    }
+
     loadLatestVersion();
+    detectSystem();
   </script>
 </body>
 
