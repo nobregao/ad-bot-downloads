@@ -34,6 +34,13 @@
       margin: 20px 0 28px;
     }
 
+    .download-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     .download-button {
       min-width: 220px;
     }
@@ -65,39 +72,41 @@
           </div>
         </div>
 
-        <a id="downloadBtn" class="ui large blue labeled icon button download-button"
-          href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot.zip"
-          onclick="handleDownload()">
-          <i class="download icon"></i>
-          Download
-        </a>
-
-        <!-- <div style="margin-top: 14px;">
-          <a class="ui basic button" href="https://github.com/nobregao/ad-bot-downloads/releases/latest" target="_blank"
-            rel="noopener noreferrer">
-            Ver detalhes da release
-          </a>
-        </div> -->
-
         <p class="support-text">
-          Em caso de dúvidas, entre em contato com o suporte.
+          Escolha a versão compatível com seu sistema operacional.
         </p>
+
+        <div class="download-group">
+
+          <a id="downloadWin" class="ui large blue labeled icon button download-button"
+            href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-windows.zip"
+            onclick="handleDownload(this)">
+            <i class="windows icon"></i>
+            Windows
+          </a>
+
+          <a id="downloadMac" class="ui large black labeled icon button download-button"
+            href="https://github.com/nobregao/ad-bot-downloads/releases/latest/download/ad-bot-macos.zip"
+            onclick="handleDownload(this)">
+            <i class="apple icon"></i>
+            Mac
+          </a>
+
+        </div>
       </div>
     </section>
   </main>
 
   <script>
-    function handleDownload() {
-      const btn = document.getElementById('downloadBtn');
+    function handleDownload(button) {
+      button.classList.add('loading', 'disabled');
+      const originalText = button.innerHTML;
 
-      btn.classList.add('loading');
-      btn.classList.add('disabled');
-      btn.innerHTML = '<i class="download icon"></i>Baixando...';
+      button.innerHTML = '<i class="download icon"></i>Baixando...';
 
       setTimeout(() => {
-        btn.classList.remove('loading');
-        btn.classList.remove('disabled');
-        btn.innerHTML = '<i class="download icon"></i>Download';
+        button.classList.remove('loading', 'disabled');
+        button.innerHTML = originalText;
       }, 3000);
     }
 
